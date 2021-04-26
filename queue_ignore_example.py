@@ -29,3 +29,6 @@ while len(q) > 0:
     else:
         ignore.add(current_item)
         print("did not ignore {} with priority {}".format(current_item, current_priority))
+
+def updateitem(queue, item):
+    

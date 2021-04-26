@@ -8,7 +8,18 @@ def traverse(goal_state, prev):
     '''
     result = [(goal_state, None)]
     # remove the following line and complete the algorithm
-    assert False
+    last_state = goal_state
+    states_list = []
+    while True:
+        states_list.append(last_state)
+        last_state_str = last_state.to_string()
+        curr_state = prev[last_state_str]
+        # reached final step
+        if curr_state is None:
+            break
+        last_state = curr_state
+
+    result = states_list.reverse()
     return result
 
 
