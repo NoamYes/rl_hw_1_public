@@ -27,8 +27,7 @@ def dijkstra(puzzle):
     # that achieves the minimal distance to the starting state of puzzle.
     prev = {initial.to_string(): None}
 
-    ignore = set()
-
+    rev_acts = {'u': 'd', 'd': 'u', 'l': 'r', 'r':'l'}
     while len(fringe) > 0:
         current_dist, curr_state = heapq.heappop(fringe)
         curr_state_str = curr_state.to_string()
@@ -38,12 +37,12 @@ def dijkstra(puzzle):
         concluded.add(curr_state.to_string())
         acts_curr_state = curr_state.get_actions()
         adj = [curr_state.apply_action(action) for action in acts_curr_state]
-        for nei in adj:
+        for idx, nei in enumerate(adj):
             nei_str = nei.to_string()
             # nei_str not in distances.keys() condition effectively means infinity value at distance
             if nei_str not in distances.keys() or distances[nei_str] > distances[curr_state_str] + 1:
                 distances[nei_str] = distances[curr_state_str] + 1
-                prev[nei_str] = curr_state
+                prev[nei_str] = rev_acts[acts_curr_state[idx]]
                 # update distance by pushing new
                 heapq.heappush(fringe, (distances[nei_str], nei))
     return prev

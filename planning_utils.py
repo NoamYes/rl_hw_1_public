@@ -9,17 +9,19 @@ def traverse(goal_state, prev):
     result = [(goal_state, None)]
     # remove the following line and complete the algorithm
     last_state = goal_state
-    states_list = []
+    states_list = [last_state]
     while True:
-        states_list.append(last_state)
         last_state_str = last_state.to_string()
-        curr_state = prev[last_state_str]
+        act_taken = prev[last_state_str]
         # reached final step
-        if curr_state is None:
+        if act_taken is None:
             break
+        curr_state = last_state.apply_action(act_taken)
+        states_list.append(curr_state)
+        result.append((curr_state, act_taken))
         last_state = curr_state
 
-    result = states_list.reverse()
+    result.reverse()
     return result
 
 
