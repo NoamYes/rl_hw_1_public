@@ -2,7 +2,11 @@ from puzzle import *
 from planning_utils import *
 import heapq
 import datetime
+import numpy as np
 
+def heuristic(state, goal_state):
+    D = len(goal_state._array)
+    return np.sum(np.abs(np.array(state._array, 'int64') - np.array(goal_state._array, 'int64')))/D**2
 
 def a_star(puzzle):
     '''
@@ -30,10 +34,25 @@ def a_star(puzzle):
     # that achieves the minimal distance to the starting state of puzzle.
     prev = {initial.to_string(): None}
 
-    while len(fringe) > 0:
-        # remove the following line and complete the algorithm
-        assert False
+    rev_acts = {'u': 'd', 'd': 'u', 'l': 'r', 'r':'l'}
 
+    while len(fringe) > 0:
+        current_dist, curr_state = heapq.heappop(fringe)
+        curr_state_str = curr_state.to_string()
+        # stopping criteria - reached goal
+        if curr_state_str == goal.to_string():
+            break
+        concluded.add(curr_state.to_string())
+        acts_curr_state = curr_state.get_actions()
+        adj = [curr_state.apply_action(action) for action in acts_curr_state]
+        for idx, nei in enumerate(adj):
+            nei_str = nei.to_string()
+            # nei_str not in distances.keys() condition effectively means infinity value at distance
+            if nei_str not in distances.keys() or distances[nei_str] > distances[curr_state_str] + 1:
+                distances[nei_str] = distances[curr_state_str] + 1
+                prev[nei_str] = rev_acts[acts_curr_state[idx]]
+                # update distance by pushing new heuristic
+                heapq.heappush(fringe, (distances[nei_str]+heuristic(nei, goal_state), nei))
     return prev
 
 
