@@ -8,6 +8,9 @@ def heuristic(state, goal_state):
     D = len(goal_state._array)
     return np.sum(np.abs(np.array(state._array, 'int64') - np.array(goal_state._array, 'int64')))/D**2
 
+def diff_heuristic(state, goal_state):
+    return np.sum(np.array(state._array) != np.array(goal_state._array))
+
 def a_star(puzzle):
     '''
     apply a_star to a given puzzle
@@ -52,7 +55,7 @@ def a_star(puzzle):
                 distances[nei_str] = distances[curr_state_str] + 1
                 prev[nei_str] = rev_acts[acts_curr_state[idx]]
                 # update distance by pushing new heuristic
-                heapq.heappush(fringe, (distances[nei_str]+heuristic(nei, goal_state), nei))
+                heapq.heappush(fringe, (distances[nei_str] + heuristic(nei, goal_state), nei))
     return prev
 
 
