@@ -11,7 +11,7 @@ def heuristic(state, goal_state):
 def diff_heuristic(state, goal_state):
     return np.sum(np.array(state._array) != np.array(goal_state._array))
 
-def a_star(puzzle):
+def a_star(puzzle, alpha=1):
     '''
     apply a_star to a given puzzle
     :param puzzle: the puzzle to solve
@@ -55,7 +55,7 @@ def a_star(puzzle):
                 distances[nei_str] = distances[curr_state_str] + 1
                 prev[nei_str] = rev_acts[acts_curr_state[idx]]
                 # update distance by pushing new heuristic
-                heapq.heappush(fringe, (distances[nei_str] + heuristic(nei, goal_state), nei))
+                heapq.heappush(fringe, (distances[nei_str] + alpha*diff_heuristic(nei, goal_state), nei))
     return prev
 
 
@@ -81,6 +81,15 @@ if __name__ == '__main__':
         goal_state = goal_state.apply_action(a)
     puzzle = Puzzle(initial_state, goal_state)
     print('original number of actions:{}'.format(len(actions)))
+    solution_start_time = datetime.datetime.now()
+    solve(puzzle)
+    print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
+
+    ## difficult puzzle
+    initial_state = State()
+    goal_state = State(s='6 4 7\r\n8 5 0\r\n3 2 1')
+    puzzle = Puzzle(initial_state, goal_state)
+    print('original number of actions:{}'.format(31))
     solution_start_time = datetime.datetime.now()
     solve(puzzle)
     print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))

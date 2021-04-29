@@ -11,7 +11,7 @@ class State:
             for l in array:
                 assert len(l) == 3
             self._array = array
-
+        
     def copy(self):
         result = State()
         result._array = [[c for c in a] for a in self._array]

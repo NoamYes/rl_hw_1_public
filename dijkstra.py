@@ -73,3 +73,12 @@ if __name__ == '__main__':
     solution_start_time = datetime.datetime.now()
     solve(puzzle)
     print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
+
+    ## difficult puzzle
+    initial_state = State()
+    goal_state = State(s='6 4 7\r\n8 5 0\r\n3 2 1')
+    puzzle = Puzzle(initial_state, goal_state)
+    print('original number of actions:{}'.format(31))
+    solution_start_time = datetime.datetime.now()
+    solve(puzzle)
+    print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
