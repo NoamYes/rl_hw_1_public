@@ -3,6 +3,7 @@ from planning_utils import *
 import heapq
 import datetime
 import numpy as np
+import matplotlib.pyplot as plt
 
 def heuristic(state, goal_state):
     D = len(goal_state._array)
@@ -59,37 +60,65 @@ def a_star(puzzle, alpha=1):
     return prev
 
 
-def solve(puzzle):
+def solve(puzzle, alpha=1):
     # compute mapping to previous using dijkstra
-    prev_mapping = a_star(puzzle)
+    prev_mapping = a_star(puzzle, alpha)
     # extract the state-action sequence
     plan = traverse(puzzle.goal_state, prev_mapping)
     print_plan(plan)
-    return plan
+    states_visitations = len(prev_mapping)
+    return plan, states_visitations
 
 
 if __name__ == '__main__':
     # we create some start and goal states. the number of actions between them is 25 although a shorter plan of
     # length 19 exists (make sure your plan is of the same length)
-    initial_state = State()
-    actions = [
-        'r', 'r', 'd', 'l', 'u', 'l', 'd', 'd', 'r', 'r', 'u', 'l', 'd', 'r', 'u', 'u', 'l', 'd', 'l', 'd', 'r', 'r',
-        'u', 'l', 'u'
-    ]
-    goal_state = initial_state
-    for a in actions:
-        goal_state = goal_state.apply_action(a)
-    puzzle = Puzzle(initial_state, goal_state)
-    print('original number of actions:{}'.format(len(actions)))
-    solution_start_time = datetime.datetime.now()
-    solve(puzzle)
-    print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
+    # initial_state = State()
+    # actions = [
+    #     'r', 'r', 'd', 'l', 'u', 'l', 'd', 'd', 'r', 'r', 'u', 'l', 'd', 'r', 'u', 'u', 'l', 'd', 'l', 'd', 'r', 'r',
+    #     'u', 'l', 'u'
+    # ]
+    # goal_state = initial_state
+    # for a in actions:
+    #     goal_state = goal_state.apply_action(a)
+    # puzzle = Puzzle(initial_state, goal_state)
+    # print('original number of actions:{}'.format(len(actions)))
+    # solution_start_time = datetime.datetime.now()
+    # solve(puzzle)
+    # print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
 
     ## difficult puzzle
+    # initial_state = State()
+    # goal_state = State(s='6 4 7\r\n8 5 0\r\n3 2 1')
+    # puzzle = Puzzle(initial_state, goal_state)
+    # print('original number of actions:{}'.format(31))
+    # solution_start_time = datetime.datetime.now()
+    # solve(puzzle)
+    # print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
+
+    ## alpha heuristic relationship
     initial_state = State()
     goal_state = State(s='6 4 7\r\n8 5 0\r\n3 2 1')
     puzzle = Puzzle(initial_state, goal_state)
-    print('original number of actions:{}'.format(31))
-    solution_start_time = datetime.datetime.now()
-    solve(puzzle)
-    print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
+    alphas = np.concatenate(([0, 0.1, 0.3, 0.5, 0.7], np.logspace(0, 1, 10)))
+    # alphas = [0, 0.1, 0.5, 0.7, 1, 3, 10, 1000]
+    # alphas = [1, 2,5 ,1000]
+    times = []
+    state_visits = []
+    for alpha in alphas:
+        solution_start_time = datetime.datetime.now()
+        plan, state_visitations = solve(puzzle, alpha)
+        time_taken = datetime.datetime.now()-solution_start_time
+        times.append(time_taken.seconds)
+        state_visits.append(state_visitations)
+
+    fig, ax1 = plt.subplots()
+
+    ax1.plot(alphas, state_visits, label="state visitations")
+    ax2 = ax1.twinx()
+    ax2.plot(alphas, times, color="red", label="time to solve")
+    ax1.legend(loc="upper right")
+    ax2.legend(loc="upper left")
+    ax1.set_xlabel(r'$\alpha$')
+    ax1.set_title('State visitations and time to solve versus ' + r'$\alpha$');  
+    plt.show()
