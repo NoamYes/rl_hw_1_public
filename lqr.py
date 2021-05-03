@@ -30,7 +30,7 @@ def get_B(cart_pole_env):
     pole_length = cart_pole_env.length
     dt = cart_pole_env.tau
     B = [0, 1/cart_mass, 0, 1/(cart_mass*pole_length)]
-    return np.matrix(B)
+    return np.matrix(B).T
 
 
 def find_lqr_control_input(cart_pole_env):
@@ -49,21 +49,33 @@ def find_lqr_control_input(cart_pole_env):
 
     # TODO - Q and R should not be zero, find values that work, hint: all the values can be <= 1.0
     Q = np.matrix([
+        [0.5, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
+        [0, 0, 1, 0],
         [0, 0, 0, 0]
     ])
 
-    R = np.matrix([0])
+    R = np.matrix([0.6])
 
     # TODO - you need to compute these matrices in your solution, but these are not returned.
-    Ps = []
+    Ps = [Q]
 
     # TODO - these should be returned see documentation above
     us = []
     xs = [np.expand_dims(cart_pole_env.state, 1)]
     Ks = []
+    dt = cart_pole_env.tau
+
+    for i in range(cart_pole_env.planning_steps):
+        P_tau = Q + A.T @ Ps[i] @ A - A.T @ Ps[i] @ B @ np.linalg.inv((R + B.T @ Ps[i] @ B)) @ B.T @ Ps[i] @ A
+        Kt = -np.linalg.inv((B.T @ Ps[i] @ B + R)) @ B.T @ Ps[i] @ A
+        ut = Kt @ xs[i]
+        Ps.append(P_tau)
+        Ks.append(Kt)
+        us.append(ut)
+        xt = (np.eye(A.shape[0]) + A * dt) @ xs[i] + B @ us[i] * dt
+        xs.append(xt)
+
 
     assert len(xs) == cart_pole_env.planning_steps + 1, "if you plan for x states there should be X+1 states here"
     assert len(us) == cart_pole_env.planning_steps, "if you plan for x states there should be X actions here"
@@ -88,7 +100,7 @@ if __name__ == '__main__':
     env = CartPoleContEnv(initial_theta=np.pi * 0.1)
     # the following is an example to start at a different theta
     # env = CartPoleContEnv(initial_theta=np.pi * 0.25)
-
+ 
     # print the matrices used in LQR
     print('A: {}'.format(get_A(env)))
     print('B: {}'.format(get_B(env)))
