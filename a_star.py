@@ -98,7 +98,7 @@ if __name__ == '__main__':
 
     ## alpha heuristic relationship
     initial_state = State()
-    goal_state = State(s='6 4 7\r\n8 5 0\r\n3 2 1')
+    goal_state = State(s='6 4 7\n8 5 0\n3 2 1')
     puzzle = Puzzle(initial_state, goal_state)
     alphas = np.concatenate(([0, 0.1, 0.3, 0.5, 0.7], np.logspace(0, 1, 10)))
     # alphas = [0, 0.1, 0.5, 0.7, 1, 3, 10, 1000]
