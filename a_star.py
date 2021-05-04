@@ -73,28 +73,28 @@ def solve(puzzle, alpha=1):
 if __name__ == '__main__':
     # we create some start and goal states. the number of actions between them is 25 although a shorter plan of
     # length 19 exists (make sure your plan is of the same length)
-    # initial_state = State()
-    # actions = [
-    #     'r', 'r', 'd', 'l', 'u', 'l', 'd', 'd', 'r', 'r', 'u', 'l', 'd', 'r', 'u', 'u', 'l', 'd', 'l', 'd', 'r', 'r',
-    #     'u', 'l', 'u'
-    # ]
-    # goal_state = initial_state
-    # for a in actions:
-    #     goal_state = goal_state.apply_action(a)
-    # puzzle = Puzzle(initial_state, goal_state)
-    # print('original number of actions:{}'.format(len(actions)))
-    # solution_start_time = datetime.datetime.now()
-    # solve(puzzle)
-    # print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
+    initial_state = State()
+    actions = [
+        'r', 'r', 'd', 'l', 'u', 'l', 'd', 'd', 'r', 'r', 'u', 'l', 'd', 'r', 'u', 'u', 'l', 'd', 'l', 'd', 'r', 'r',
+        'u', 'l', 'u'
+    ]
+    goal_state = initial_state
+    for a in actions:
+        goal_state = goal_state.apply_action(a)
+    puzzle = Puzzle(initial_state, goal_state)
+    print('original number of actions:{}'.format(len(actions)))
+    solution_start_time = datetime.datetime.now()
+    solve(puzzle)
+    print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
 
     ## difficult puzzle
-    # initial_state = State()
-    # goal_state = State(s='6 4 7\r\n8 5 0\r\n3 2 1')
-    # puzzle = Puzzle(initial_state, goal_state)
-    # print('original number of actions:{}'.format(31))
-    # solution_start_time = datetime.datetime.now()
-    # solve(puzzle)
-    # print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
+    initial_state = State()
+    goal_state = State(s='6 4 7\r\n8 5 0\r\n3 2 1')
+    puzzle = Puzzle(initial_state, goal_state)
+    print('original number of actions:{}'.format(31))
+    solution_start_time = datetime.datetime.now()
+    solve(puzzle)
+    print('time to solve {}'.format(datetime.datetime.now()-solution_start_time))
 
     ## alpha heuristic relationship
     initial_state = State()
@@ -120,5 +120,5 @@ if __name__ == '__main__':
     ax1.legend(loc="upper right")
     ax2.legend(loc="upper left")
     ax1.set_xlabel(r'$\alpha$')
-    ax1.set_title('State visitations and time to solve versus ' + r'$\alpha$');  
+    ax1.set_title('State visitations and time to solve versus ' + r'$\alpha$')  
     plt.show()
