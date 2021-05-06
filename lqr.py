@@ -13,8 +13,7 @@ def get_A(cart_pole_env):
     cart_mass = cart_pole_env.masscart
     pole_length = cart_pole_env.length
     dt = cart_pole_env.tau
-
-    return np.matrix([[0]])
+    return (np.matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])+dt*np.matrix([[0, 1, 0, 0], [0, 0, (pole_mass / cart_mass) * g, 0], [0, 0, 0, 1], [0, 0, (g/pole_length)*(1+pole_mass/cart_mass), 0]]))
 
 
 def get_B(cart_pole_env):
@@ -29,7 +28,7 @@ def get_B(cart_pole_env):
     pole_length = cart_pole_env.length
     dt = cart_pole_env.tau
 
-    return np.matrix([[0]])
+    return (np.matrix([[0],[1/cart_mass], [0], [1/(cart_mass * pole_length)]])*dt)
 
 
 def find_lqr_control_input(cart_pole_env):
@@ -47,22 +46,33 @@ def find_lqr_control_input(cart_pole_env):
     B = get_B(cart_pole_env)
 
     # TODO - Q and R should not be zero, find values that work, hint: all the values can be <= 1.0
+    w_1 = 0.05
+    w_2 = 0.94
+    w_3 = 0.001
     Q = np.matrix([
+        [w_1, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
+        [0, 0, w_2, 0],
         [0, 0, 0, 0]
     ])
 
-    R = np.matrix([0])
+    R = np.matrix([w_3])
 
     # TODO - you need to compute these matrices in your solution, but these are not returned.
-    Ps = []
+    Ps = [Q]
 
     # TODO - these should be returned see documentation above
     us = []
     xs = [np.expand_dims(cart_pole_env.state, 1)]
     Ks = []
+    for i in range(cart_pole_env.planning_steps):
+        temp_inv = np.linalg.inv(R+B.T@Ps[-1]@B)
+        P_tau = Q + A.T@Ps[-1]@A - A.T@Ps[-1]@B@(temp_inv)@B.T@Ps[-1]@A
+        Ks.append(-(temp_inv)@B.T@Ps[-1]@A)
+        us.append(Ks[-1]@xs[-1])
+        xs.append(A@(xs[-1])+B@us[-1])
+        Ps.append(P_tau)
+
 
     assert len(xs) == cart_pole_env.planning_steps + 1, "if you plan for x states there should be X+1 states here"
     assert len(us) == cart_pole_env.planning_steps, "if you plan for x states there should be X actions here"
@@ -84,7 +94,7 @@ def print_diff(iteration, planned_theta, actual_theta, planned_action, actual_ac
 
 
 if __name__ == '__main__':
-    env = CartPoleContEnv(initial_theta=np.pi * 0.1)
+    env = CartPoleContEnv(initial_theta=-np.pi * 0.1)
     # the following is an example to start at a different theta
     # env = CartPoleContEnv(initial_theta=np.pi * 0.25)
 
