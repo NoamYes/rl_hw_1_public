@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from cartpole_cont import CartPoleContEnv
 
 
@@ -46,9 +47,9 @@ def find_lqr_control_input(cart_pole_env):
     B = get_B(cart_pole_env)
 
     # TODO - Q and R should not be zero, find values that work, hint: all the values can be <= 1.0
-    w_1 = 0.05
-    w_2 = 0.94
-    w_3 = 0.001
+    w_1 = 0.2
+    w_2 = 0.8
+    w_3 = 0.00001
     Q = np.matrix([
         [w_1, 0, 0, 0],
         [0, 0, 0, 0],
@@ -94,7 +95,8 @@ def print_diff(iteration, planned_theta, actual_theta, planned_action, actual_ac
 
 
 if __name__ == '__main__':
-    env = CartPoleContEnv(initial_theta=-np.pi * 0.1)
+    #for i in np.arange(0.2, 0.3, 0.001):
+    env = CartPoleContEnv(initial_theta=np.pi * 0.28)
     # the following is an example to start at a different theta
     # env = CartPoleContEnv(initial_theta=np.pi * 0.25)
 
@@ -111,10 +113,12 @@ if __name__ == '__main__':
     is_done = False
     iteration = 0
     is_stable_all = []
+    actual_theta_list = []
     while not is_done:
         # print the differences between planning and execution time
         predicted_theta = xs[iteration].item(2)
         actual_theta = actual_state[2]
+        actual_theta_list.append(actual_theta)
         predicted_action = us[iteration].item(0)
         actual_action = (Ks[iteration] * np.expand_dims(actual_state, 1)).item(0)
         print_diff(iteration, predicted_theta, actual_theta, predicted_action, actual_action)
@@ -123,6 +127,7 @@ if __name__ == '__main__':
         actual_action = max(env.action_space.low.item(0), min(env.action_space.high.item(0), actual_action))
         actual_action = np.array([actual_action])
         actual_state, reward, is_done, _ = env.step(actual_action)
+        #actual_state, reward, is_done, _ = env.step(np.array([predicted_action]))
         is_stable = reward == 1.0
         is_stable_all.append(is_stable)
         env.render()
@@ -130,6 +135,22 @@ if __name__ == '__main__':
     env.close()
     # we assume a valid episode is an episode where the agent managed to stabilize the pole for the last 100 time-steps
     valid_episode = np.all(is_stable_all[-100:])
+    # if valid_episode == False:
+    #     print(f'Failed at {i}')
+    #     break
     # print if LQR succeeded
     print('valid episode: {}'.format(valid_episode))
+
+    # Data for plotting
+    t = np.arange(0, env.planning_steps)*0.01
+    #
+    fig, ax = plt.subplots()
+    ax.plot(t, actual_theta_list)
+
+    ax.set(xlabel='Iteration', ylabel='$\\theta$ֿ',
+           title='$\\frac{\pi}{10}$')
+    ax.grid()
+
+    # fig.savefig("theta_pi_10.png")
+    plt.show()
 
