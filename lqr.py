@@ -101,11 +101,12 @@ def print_diff(iteration, planned_theta, actual_theta, planned_action, actual_ac
 
 
 if __name__ == '__main__':
+    feedforward = True
     stable = True
-    theta_0 = np.pi*0.1
+    theta_0 = 0
     fig, ax = plt.subplots()
     # while stable:
-    for theta_0, label in zip([np.pi*0.1, np.pi*0.341, np.pi*0.341*0.5], ['$\pi*0.1$', '$\pi*0.341$', '$\pi*0.341*0.5$']):
+    for theta_0, label in zip([np.pi*0.1, 1e-6, 0.5*1e-6], ['$\pi*0.1$', '$1e^{-6}$', '$1e^{-6}*0.5$']):
         env = CartPoleContEnv(initial_theta=theta_0)
         # the following is an example to start at a different theta
         # env = CartPoleContEnv(initial_theta=np.pi * 0.25)
@@ -135,9 +136,11 @@ if __name__ == '__main__':
             # apply action according to actual state visited
             # make action in range
             actual_action = max(env.action_space.low.item(0), min(env.action_space.high.item(0), actual_action))
-            actual_action = np.array([actual_action])
-            actual_state, reward, is_done, _ = env.step(actual_action)
-            # actual_state, reward, is_done, _ = env.step(np.array([predicted_action]))
+            if feedforward:
+                actual_state, reward, is_done, _ = env.step(np.array([predicted_action]))
+            else:
+                actual_action = np.array([actual_action])
+                actual_state, reward, is_done, _ = env.step(actual_action)
             is_stable = reward == 1.0
             is_stable_all.append(is_stable)
             env.render()
@@ -148,24 +151,24 @@ if __name__ == '__main__':
         # if valid_episode == False:
         #     print(f'Failed at {theta_0}')
         #     break
-        # theta_0 += 0.01
+        # theta_0 += 1e-6
         # print(theta_0)
         # print if LQR succeeded
         print('valid episode: {}'.format(valid_episode))
 
         # Data for plotting
         t = np.arange(0, env.planning_steps)*env.tau
-        #
-        #
+
+
         actual_theta_list = np.array(actual_theta_list)
         actual_theta_list = np.mod(actual_theta_list, 2*np.pi)
         actual_theta_list[actual_theta_list > np.pi] = -(2*np.pi - actual_theta_list[actual_theta_list > np.pi])
         ax.plot(t, actual_theta_list, label=label)
-
+    #
     ax.set(xlabel='Time (s)', ylabel='$\\theta$ֿ',
-           title='$\\theta_0={\\frac{\pi}{10},\pi*0.34,\pi*0.34*0.5}$')
+           title='$\\theta_0={\\frac{\pi}{10},1e^{-6},1e^{-6}*0.5}$')
     ax.grid()
     leg = ax.legend(loc="lower right", ncol=1, shadow=True, title="Legend")
-    fig.savefig("theta_pi_10.png")
+    fig.savefig("theta_pi_10_feedforward.png")
     plt.show()
 
