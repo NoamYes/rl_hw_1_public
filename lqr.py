@@ -105,7 +105,7 @@ if __name__ == '__main__':
     theta_0 = np.pi*0.1
     fig, ax = plt.subplots()
     # while stable:
-    for theta_0 in [np.pi*0.1]:#, 0.894, 0.894*0.5]:
+    for theta_0, label in zip([np.pi*0.1, np.pi*0.341, np.pi*0.341*0.5], ['$\pi*0.1$', '$\pi*0.341$', '$\pi*0.341*0.5$']):
         env = CartPoleContEnv(initial_theta=theta_0)
         # the following is an example to start at a different theta
         # env = CartPoleContEnv(initial_theta=np.pi * 0.25)
@@ -154,16 +154,19 @@ if __name__ == '__main__':
         print('valid episode: {}'.format(valid_episode))
 
         # Data for plotting
-        t = np.arange(0, env.planning_steps)*0.01
+        t = np.arange(0, env.planning_steps)#*0.01
         #
         #
-        ax.plot(t, actual_theta_list, label=str(theta_0))
+        actual_theta_list = np.array(actual_theta_list)
+        actual_theta_list = np.mod(actual_theta_list, 2*np.pi)
+        actual_theta_list[actual_theta_list > np.pi] = -(2*np.pi - actual_theta_list[actual_theta_list > np.pi])
+        ax.plot(t, actual_theta_list, label=label)
 
-    # ax.set(xlabel='Time (s)', ylabel='$\\theta$ֿ',
-    #        title='$\\theta_0={\\frac{\pi}{10},0.28*\pi,0.28*\pi*0.5}$')
-    # ax.grid()
-    # leg = ax.legend(loc="lower right", bbox_to_anchor=[0, 1],
-    #                  ncol=1, shadow=True, title="Legend")
-    # fig.savefig("theta_pi_10.png")
-    # plt.show()
+    ax.set(xlabel='Time (s)', ylabel='$\\theta$ֿ',
+           title='$\\theta_0={\\frac{\pi}{10},\pi*0.34,\pi*0.34*0.5}$')
+    ax.grid()
+    leg = ax.legend(loc="lower right", bbox_to_anchor=[0, 1],
+                     ncol=1, shadow=True, title="Legend")
+    fig.savefig("theta_pi_10.png")
+    plt.show()
 
