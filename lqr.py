@@ -154,7 +154,7 @@ if __name__ == '__main__':
         print('valid episode: {}'.format(valid_episode))
 
         # Data for plotting
-        t = np.arange(0, env.planning_steps)#*0.01
+        t = np.arange(0, env.planning_steps)*env.tau
         #
         #
         actual_theta_list = np.array(actual_theta_list)
@@ -165,8 +165,7 @@ if __name__ == '__main__':
     ax.set(xlabel='Time (s)', ylabel='$\\theta$ֿ',
            title='$\\theta_0={\\frac{\pi}{10},\pi*0.34,\pi*0.34*0.5}$')
     ax.grid()
-    leg = ax.legend(loc="lower right", bbox_to_anchor=[0, 1],
-                     ncol=1, shadow=True, title="Legend")
+    leg = ax.legend(loc="lower right", ncol=1, shadow=True, title="Legend")
     fig.savefig("theta_pi_10.png")
     plt.show()
 
