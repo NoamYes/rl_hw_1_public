@@ -11,7 +11,7 @@ class CartPoleContEnv(gym.Env):
         'video.frames_per_second': 50
     }
 
-    def __init__(self, initial_theta=0.0):
+    def __init__(self, initial_theta=0.0, max_force=100.0):
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
@@ -32,13 +32,16 @@ class CartPoleContEnv(gym.Env):
             np.finfo(np.float32).max])
 
         self.observation_space = spaces.Box(-high, high, dtype=np.float32)
-        high = np.array([100.0])
+        high = np.array([max_force])
         self.action_space = spaces.Box(-high, high, dtype=np.float32)
 
         self.seed()
         self.viewer = None
         self.state = None
         self.planning_steps_counter = None
+
+    def set_initial_theta(self, init_theta):
+        self.initial_theta = init_theta
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
