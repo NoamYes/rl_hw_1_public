@@ -10,6 +10,7 @@ def traverse(goal_state, prev):
     # remove the following line and complete the algorithm
     last_state = goal_state
     states_list = [last_state]
+    rev_acts = {'u': 'd', 'd': 'u', 'l': 'r', 'r':'l'}
     while True:
         last_state_str = last_state.to_string()
         act_taken = prev[last_state_str]
@@ -18,7 +19,7 @@ def traverse(goal_state, prev):
             break
         curr_state = last_state.apply_action(act_taken)
         states_list.append(curr_state)
-        result.append((curr_state, act_taken))
+        result.append((curr_state, rev_acts[act_taken]))
         last_state = curr_state
 
     result.reverse()

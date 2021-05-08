@@ -26,7 +26,6 @@ def dijkstra(puzzle):
     # the return value of the algorithm, a mapping from a state (as a string) to the state leading to it (NOT as string)
     # that achieves the minimal distance to the starting state of puzzle.
     prev = {initial.to_string(): None}
-
     rev_acts = {'u': 'd', 'd': 'u', 'l': 'r', 'r':'l'}
     while len(fringe) > 0:
         current_dist, curr_state = heapq.heappop(fringe)
