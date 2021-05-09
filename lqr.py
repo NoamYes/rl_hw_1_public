@@ -1,6 +1,6 @@
 import numpy as np
 from cartpole_cont import CartPoleContEnv
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 def get_A(cart_pole_env):
     '''
@@ -47,9 +47,9 @@ def find_lqr_control_input(cart_pole_env):
     # TODO - you first need to compute A and B for LQR
     A = get_A(cart_pole_env)
     B = get_B(cart_pole_env)
-    w1 = 0.1
+    w1 = 0.5
     w2 = 1
-    w3 = 1
+    w3 = 0.1
     # TODO - Q and R should not be zero, find values that work, hint: all the values can be <= 1.0
     Q = np.matrix([
         [w1, 0, 0, 0],

@@ -1,10 +1,10 @@
 import os
-
-
 class State:
     def __init__(self, s=None):
         if s is None:
             self._array = [[str(3*i + j) for j in range(3)] for i in range(3)]
+        elif type(s) is list:
+            self._array = s
         else:
             array = [[c for c in line.split(' ')] for line in s.split(os.linesep)]
             assert len(array) == 3

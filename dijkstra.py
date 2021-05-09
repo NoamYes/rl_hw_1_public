@@ -1,7 +1,9 @@
+
 from puzzle import *
 from planning_utils import *
 import heapq
 import datetime
+import os
 
 
 def dijkstra(puzzle):
@@ -75,7 +77,7 @@ if __name__ == '__main__':
 
     ## difficult puzzle
     initial_state = State()
-    goal_state = State(s='6 4 7\r\n8 5 0\r\n3 2 1')
+    goal_state = State(s=[['6', '4', '7'],['8', '5', '0'],['3', '2', '1']])
     puzzle = Puzzle(initial_state, goal_state)
     print('original number of actions:{}'.format(31))
     solution_start_time = datetime.datetime.now()
