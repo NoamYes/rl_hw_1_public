@@ -1,6 +1,6 @@
 import numpy as np
 from cartpole_cont import CartPoleContEnv
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 def get_A(cart_pole_env):
     '''
@@ -174,7 +174,7 @@ if __name__ == '__main__':
         actual_state, reward, is_done, _ = env.step(actual_action)
         is_stable = reward == 1.0
         is_stable_all.append(is_stable)
-        # env.render()
+        env.render()
         iteration += 1
     env.close()
     # we assume a valid episode is an episode where the agent managed to stabilize the pole for the last 100 time-steps
